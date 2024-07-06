@@ -13,7 +13,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(45deg, rgba(243, 231, 233, 0.7) 0%, rgba(227, 238, 255, 0.7) 99%, rgba(227, 238, 255, 0.7) 100%), url('teacher.png');
+            background: linear-gradient(45deg, rgba(243, 231, 233, 0.5) 0%, rgba(227, 238, 255, 0.5) 99%, rgba(227, 238, 255, 0.5) 100%), url('teacher.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -29,12 +29,11 @@
             word-wrap: break-word;
             position: relative;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.7);
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .hidden {
-            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
         }
         .fade-in {
             animation: fadeIn 2s ease-in-out;
@@ -108,6 +107,7 @@
 
         async function displayWithDelay(text, delay) {
             content.textContent = text;
+            content.style.opacity = 1;
             content.classList.add('fade-in');
             await new Promise(resolve => setTimeout(resolve, delay));
             content.classList.remove('fade-in');
@@ -115,10 +115,12 @@
             await new Promise(resolve => setTimeout(resolve, 2000));
             content.classList.remove('fade-out');
             content.textContent = '';
+            content.style.opacity = 0;
         }
 
         async function displayPoem(poem) {
             content.innerHTML = poem.replace(/\n/g, '<br>');
+            content.style.opacity = 1;
             content.classList.add('fade-in');
             await new Promise(resolve => setTimeout(resolve, 5000));
             
@@ -149,13 +151,33 @@
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
+        async function transformText(startText, endText) {
+            const steps = 20;
+            for (let i = 0; i <= steps; i++) {
+                const progress = i / steps;
+                const currentText = startText.split('').map((char, index) => {
+                    if (Math.random() < progress) {
+                        return endText[index] || '';
+                    }
+                    return char;
+                }).join('');
+                content.textContent = currentText;
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+
         async function main() {
-            await displayWithDelay('地理', 2000);
+            // Wait for font to load
+            await document.fonts.ready;
+
+            await displayWithDelay('地理', 1000);
             await displayPoem(geographyPoem);
-            await displayWithDelay('生物', 2000);
+            await transformText('情我门吃南级粼夏', '请我们吃南极磷虾');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            await displayWithDelay('生物', 1000);
             await displayPoem(biologyPoem);
-            
-            content.innerHTML = '<div class="fade-in">请我们吃南极磷虾，带我们参观种子蕨</div>';
+            await transformText('代我闷参观重兹绝', '带我们参观种子蕨');
         }
 
         main();
