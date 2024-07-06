@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>感恩祝福</title>
+    <title>感恩祝福byDH （为了藏头押韵我容易嘛）</title>
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
         body {
@@ -80,6 +80,20 @@
             50% { transform: translate(0, 15px); }
             100% { transform: translate(0, -0px); }
         }
+        .button {
+            font-size: 3vmin;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -94,7 +108,8 @@
 南山翠树常青木，
 级级攀登会考路。
 粼粼水面载恩情，
-夏日荷塘映碧云。`;
+夏日荷塘映碧云。
+`;
 
         const biologyPoem = `代语宜用诗一首，
 我请您将感恩收。
@@ -103,7 +118,8 @@
 观种子蕨目如镜，
 重任在肩日日勤。
 兹愿桃李满天下，
-绝后空前道谢留。`;
+绝后空前道谢留。
+`;
 
         async function displayWithDelay(text, delay) {
             content.textContent = text;
@@ -165,22 +181,44 @@
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
         }
+async function playSequence(subject) {
+            await displayWithDelay(subject, 1000);
+            if (subject === '地理') {
+                await displayPoem(geographyPoem);
+                await transformText('情我门吃南级粼夏', '请我们吃南极磷虾');
+            } else {
+                await displayPoem(biologyPoem);
+                await transformText('代我闷参观重兹绝', '带我们参观种子蕨');
+            }
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            content.innerHTML = '<div class="fade-in">感谢您一直以来的教诲</div>';
+            content.style.opacity = 1;
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            location.reload();
+        }
 
-        async function main() {
+        function createButton(text, onClick) {
+            const button = document.createElement('button');
+            button.textContent = text;
+            button.classList.add('button');
+            button.addEventListener('click', onClick);
+            return button;
+        }
+
+        async function init() {
             // Wait for font to load
             await document.fonts.ready;
 
-            await displayWithDelay('地理', 1000);
-            await displayPoem(geographyPoem);
-            await transformText('情我门吃南级粼夏', '请我们吃南极磷虾');
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            await displayWithDelay('生物', 1000);
-            await displayPoem(biologyPoem);
-            await transformText('代我闷参观重兹绝', '带我们参观种子蕨');
+            content.innerHTML = '<h2>DH的感恩祝福</h2>';
+            const geographyButton = createButton('地理', () => playSequence('地理'));
+            const biologyButton = createButton('生物', () => playSequence('生物'));
+            
+            content.appendChild(geographyButton);
+            content.appendChild(biologyButton);
+            content.style.opacity = 1;
         }
 
-        main();
+        init();
     </script>
 </body>
 </html>
