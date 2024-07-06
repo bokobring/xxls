@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>感恩祝福</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Ma Shan Zheng', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, rgba(243, 231, 233, 0.7) 0%, rgba(227, 238, 255, 0.7) 99%, rgba(227, 238, 255, 0.7) 100%), url('teacher.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        #content {
+            text-align: center;
+            font-size: 5vmin;
+            white-space: pre-wrap;
+            max-width: 90vw;
+            word-wrap: break-word;
+            position: relative;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        .fade-in {
+            animation: fadeIn 2s ease-in-out;
+        }
+        .fade-out {
+            animation: fadeOut 2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        .bold {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .fade {
+            opacity: 0.3;
+            transition: opacity 1s ease-in-out;
+        }
+        .vertical {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+        .horizontal {
+            writing-mode: horizontal-tb;
+        }
+        .transform-text {
+            transition: all 2s ease-in-out;
+        }
+        @media (max-width: 600px) {
+            #content {
+                font-size: 4vmin;
+            }
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, 15px); }
+            100% { transform: translate(0, -0px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="content" class="floating"></div>
+
+    <script>
+        const content = document.getElementById('content');
+        const geographyPoem = `情深意重二载余，
+我愿以诗代万语。
+门前磷虾歌一曲，
+吃定梯田永不逾。
+南山翠树常青木，
+级级攀登会考路。
+粼粼水面载恩情，
+夏日荷塘映碧云。`;
+
+        const biologyPoem = `代语宜用诗一首，
+我请您将感恩收。
+闷问何以作此轴？
+参见考卷题未收。
+观种子蕨目如镜，
+重任在肩日日勤。
+兹愿桃李满天下，
+绝后空前道谢留。`;
+
+        async function displayWithDelay(text, delay) {
+            content.textContent = text;
+            content.classList.add('fade-in');
+            await new Promise(resolve => setTimeout(resolve, delay));
+            content.classList.remove('fade-in');
+            content.classList.add('fade-out');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            content.classList.remove('fade-out');
+            content.textContent = '';
+        }
+
+        async function displayPoem(poem) {
+            content.innerHTML = poem.replace(/\n/g, '<br>');
+            content.classList.add('fade-in');
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            
+            const lines = poem.split('\n');
+            content.innerHTML = lines.map(line => 
+                `<span class="line"><span class="first-char">${line.charAt(0)}</span>${line.slice(1)}</span>`
+            ).join('<br>');
+            
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            document.querySelectorAll('.first-char').forEach(span => {
+                span.classList.add('bold');
+            });
+            document.querySelectorAll('.line').forEach(line => {
+                line.classList.add('fade');
+            });
+            
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            const firstChars = Array.from(document.querySelectorAll('.first-char')).map(span => span.textContent);
+            content.innerHTML = `<div class="vertical transform-text">${firstChars.join('')}</div>`;
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            content.querySelector('.vertical').classList.remove('vertical');
+            content.querySelector('.transform-text').classList.add('horizontal');
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+        async function main() {
+            await displayWithDelay('地理', 2000);
+            await displayPoem(geographyPoem);
+            await displayWithDelay('生物', 2000);
+            await displayPoem(biologyPoem);
+            
+            content.innerHTML = '<div class="fade-in">请我们吃南极磷虾，带我们参观种子蕨</div>';
+        }
+
+        main();
+    </script>
+</body>
+</html>
